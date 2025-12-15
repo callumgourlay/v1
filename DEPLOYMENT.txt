@@ -1,0 +1,159 @@
+ScotSMART Multi-Domain Next.js Deployment (Linux + Nginx + PM2)
+================================================================
+This guide covers a straightforward way to deploy and update the app on a Linux server using Node.js, PM2, and Nginx as a reverse proxy. It supports all configured domains by pointing them to the same app and using host detection in `lib/domainConfig.js`.
+
+Prerequisites
+-------------
+- Ubuntu/Debian-based server with sudo
+- Node.js LTS installed (18+ recommended)
+- Git installed
+- Nginx installed
+- Domains pointing to the server’s public IP (A/AAAA records for all domains)
+- TLS certificates via certbot (Let’s Encrypt) or equivalent
+
+Project structure recap
+-----------------------
+- Next.js app (app router)
+- Domain-aware config: lib/domainConfig.js
+- GA/analytics: components/Analytics.js (uses NEXT_PUBLIC_GA_ID)
+- Forms: client-side POST to Cloudflare Worker (configured in components/ContactForm.js and components/ShowHomeForm.js)
+- Sitemap/robots: app/sitemap.js, app/robots.js (uses NEXT_PUBLIC_PRIMARY_DOMAIN)
+- Cookie banner and structured data included
+
+Environment variables (example .env)
+------------------------------------
+Create a `.env.production` file at project root:
+```
+NODE_ENV=production
+NEXT_PUBLIC_PRIMARY_DOMAIN=scotsmart.co.uk
+NEXT_PUBLIC_GA_ID=G-XXXXXX   # optional
+NEXT_PUBLIC_DEV_DOMAIN=scotsmart.co.uk
+```
+If you switch the form endpoint to an env var, add:
+```
+NEXT_PUBLIC_FORM_ENDPOINT=https://scotsmart-form-worker.callumg.workers.dev
+```
+
+Build and run with PM2
+----------------------
+1) Clone and install:
+```
+git clone <repo-url> /var/www/scotsmart
+cd /var/www/scotsmart
+npm ci
+```
+2) Build:
+```
+npm run build
+```
+3) Start with PM2:
+```
+pm2 start npm --name "scotsmart" -- start
+pm2 save
+pm2 startup systemd
+```
+This runs `next start` on default port 3000. Adjust if needed (e.g., `PORT=3001`).
+
+Nginx reverse proxy
+-------------------
+Create `/etc/nginx/sites-available/scotsmart.conf`:
+```
+server {
+    listen 80;
+    listen [::]:80;
+    server_name scotsmart.co.uk www.scotsmart.co.uk
+                businessitglasgow.co.uk www.businessitglasgow.co.uk
+                businessitglasgow.com www.businessitglasgow.com
+                fixmyitglasgow.co.uk www.fixmyitglasgow.co.uk
+                fixmyitglasgow.com www.fixmyitglasgow.com
+                myglasgowit.co.uk www.myglasgowit.co.uk
+                myglasgowit.com www.myglasgowit.com
+                smallbusinessitglasgow.co.uk www.smallbusinessitglasgow.co.uk
+                smallbusinessitglasgow.com www.smallbusinessitglasgow.com
+                trusteditscotland.co.uk www.trusteditscotland.co.uk
+                trusteditscotland.com www.trusteditscotland.com
+                glasgowtechsupport.co.uk www.glasgowtechsupport.co.uk
+                glasgowtechsupport.com www.glasgowtechsupport.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 90;
+    }
+}
+```
+Enable and test:
+```
+sudo ln -s /etc/nginx/sites-available/scotsmart.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+TLS (Let’s Encrypt)
+-------------------
+Issue certs for all domains:
+```
+sudo certbot --nginx -d scotsmart.co.uk -d www.scotsmart.co.uk \
+  -d businessitglasgow.co.uk -d www.businessitglasgow.co.uk \
+  -d businessitglasgow.com -d www.businessitglasgow.com \
+  -d fixmyitglasgow.co.uk -d www.fixmyitglasgow.co.uk \
+  -d fixmyitglasgow.com -d www.fixmyitglasgow.com \
+  -d myglasgowit.co.uk -d www.myglasgowit.co.uk \
+  -d myglasgowit.com -d www.myglasgowit.com \
+  -d smallbusinessitglasgow.co.uk -d www.smallbusinessitglasgow.co.uk \
+  -d smallbusinessitglasgow.com -d www.smallbusinessitglasgow.com \
+  -d trusteditscotland.co.uk -d www.trusteditscotland.co.uk \
+  -d trusteditscotland.com -d www.trusteditscotland.com \
+  -d glasgowtechsupport.co.uk -d www.glasgowtechsupport.co.uk \
+  -d glasgowtechsupport.com -d www.glasgowtechsupport.com
+```
+Certbot will update Nginx blocks to 443 automatically. Verify `nginx -t` and reload Nginx.
+
+Updates (zero-downtime)
+-----------------------
+```
+cd /var/www/scotsmart
+git pull
+npm ci
+npm run build
+pm2 reload scotsmart
+```
+If env vars change, restart: `pm2 restart scotsmart`.
+
+Log management
+--------------
+- App logs: `pm2 logs scotsmart`
+- Nginx logs: `/var/log/nginx/access.log`, `/var/log/nginx/error.log`
+
+Cloudflare Worker forms (already wired)
+---------------------------------------
+- Worker endpoint: https://scotsmart-form-worker.callumg.workers.dev
+- Forms post JSON from ContactForm/ShowHomeForm components with `type: "contact"` or `"show-home"`.
+- Ensure Worker bindings: `FORM_SUBMISSIONS` (KV optional), `FORM_EMAIL` (email routing), `WEBHOOK_URL` (optional).
+
+Favicon and OG images
+---------------------
+- Place favicon at `app/icon.ico` (preferred) or `app/icon.png`/`app/icon.svg`.
+- OG images per domain are set via `ogImage` in `lib/domainConfig.js` (uses branding PNGs).
+
+Health checks (optional)
+------------------------
+You can add a simple route (e.g., `/api/health`) to return 200 for monitoring. Then configure an Uptime monitor to hit https://scotsmart.co.uk/api/health.
+
+Backups
+-------
+- Keep the repo backed up (git remote).
+- Back up `.env.production`.
+- Certificates are auto-renewed by certbot.
+
+Performance tips
+----------------
+- Enable Nginx gzip/brotli (optional) via `gzip on;` or brotli module.
+- Use `npm ci` to ensure clean installs.
+- Keep Node.js LTS updated.
