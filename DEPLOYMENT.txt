@@ -131,6 +131,16 @@ Log management
 - App logs: `pm2 logs scotsmart`
 - Nginx logs: `/var/log/nginx/access.log`, `/var/log/nginx/error.log`
 
+Multi-domain must-do checklist
+------------------------------
+- DNS: set A/AAAA records for both apex and www for every domain in `server_name`.
+- Host header: keep `proxy_set_header Host $host;` (already shown). The app strips `www.` and maps to each domain config.
+- Env: set `NEXT_PUBLIC_PRIMARY_DOMAIN=scotsmart.co.uk` so robots/sitemap point to the primary domain.
+- Branding: per-domain logos/OG images live in `public/branding` and are referenced in `lib/domainConfig.js`.
+- Favicon: served dynamically from the domain’s logo; still add `app/icon.ico|png|svg` if you want a standard favicon file.
+- Forms: currently post to `https://scotsmart-form-worker.callumg.workers.dev`. If you change it, set `NEXT_PUBLIC_FORM_ENDPOINT` and adjust the form components.
+- After any change: `npm run build && pm2 reload scotsmart` (restart if env changed).
+
 Cloudflare Worker forms (already wired)
 ---------------------------------------
 - Worker endpoint: https://scotsmart-form-worker.callumg.workers.dev
