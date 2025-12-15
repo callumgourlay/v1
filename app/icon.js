@@ -22,3 +22,5 @@ export async function GET() {
     return new NextResponse("Not found", { status: 404 });
   }
 }
+
+export default GET;
