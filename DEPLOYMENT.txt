@@ -38,7 +38,7 @@ Build and run with PM2
 ----------------------
 1) Clone and install:
 ```
-git clone <repo-url> /var/www/scotsmart
+git clone https://github.com/callumgourlay/v1.git /var/www/scotsmart
 cd /var/www/scotsmart
 npm ci
 ```
