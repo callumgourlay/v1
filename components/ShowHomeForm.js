@@ -28,7 +28,8 @@ export default function ShowHomeForm({ accent, phone }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error("Failed");
       setStatus({ state: "success", message: "Thanks - we’ve received your booking request." });
       event.currentTarget.reset();
     } catch (err) {

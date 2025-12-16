@@ -32,7 +32,7 @@ export default function NavBar({ config }) {
             <Link
               key={link.href}
               href={link.href}
-              className="hover:text-gray-950 transition"
+              className="nav-link hover:text-gray-950 transition"
             >
               {link.label}
             </Link>
@@ -42,10 +42,11 @@ export default function NavBar({ config }) {
             accent={accent}
             label={`Call ${config?.phone}`}
             size="sm"
+            variant="glass"
           />
         </nav>
         <div className="md:hidden">
-          <CallButton phone={config?.phone} accent={accent} label="Call now" size="sm" />
+          <CallButton phone={config?.phone} accent={accent} label="Call now" size="sm" variant="glass" />
         </div>
       </div>
     </header>

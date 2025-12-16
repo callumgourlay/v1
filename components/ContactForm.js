@@ -15,7 +15,7 @@ export default function ContactForm({ accent, phone }) {
     const payload = {
       type: "contact",
       name: formData.get("name"),
-      business: formData.get("business"),
+      business: formData.get("business") || "business",
       email: formData.get("email"),
       phone: formData.get("phone"),
       message: formData.get("message"),
@@ -29,7 +29,8 @@ export default function ContactForm({ accent, phone }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error("Failed");
       setStatus({ state: "success", message: "Thanks – we’ve received your enquiry." });
       event.currentTarget.reset();
     } catch (err) {
@@ -55,14 +56,15 @@ export default function ContactForm({ accent, phone }) {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-800">Business / Home</label>
-        <input
-          type="text"
+        <select
           name="business"
-          className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2"
+          className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 bg-white"
           style={{ "--tw-ring-color": accent.secondary }}
-          placeholder="Business name or Home"
-          required
-        />
+          defaultValue="business"
+        >
+          <option value="business">Business</option>
+          <option value="home">Home</option>
+        </select>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div>
@@ -84,7 +86,6 @@ export default function ContactForm({ accent, phone }) {
             className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2"
             style={{ "--tw-ring-color": accent.secondary }}
             placeholder={phone}
-            required
           />
         </div>
       </div>

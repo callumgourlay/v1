@@ -105,6 +105,18 @@ export default async function Home() {
   const config = getDomainConfig(host);
   const accent = config.accent || { primary: "#307fb9", secondary: "#3eaedf" };
   const bulletStyle = { backgroundColor: accent.primary };
+  const heroBackground = {
+    background: `
+      radial-gradient(circle at 15% 20%, ${accent.primary}25, transparent 40%),
+      radial-gradient(circle at 85% 0%, ${accent.secondary}28, transparent 42%),
+      linear-gradient(135deg, #f8fbff, #fdfdfd)
+    `,
+  };
+  const accentGradient = { background: `linear-gradient(135deg, ${accent.primary}, ${accent.secondary})` };
+  const dottedGrid = {
+    backgroundImage: `radial-gradient(circle, ${accent.primary}25 1px, transparent 1px)`,
+    backgroundSize: "24px 24px",
+  };
   const ghostButton =
     "inline-flex items-center justify-center gap-2 rounded-full border font-semibold shadow-sm px-5 py-2.5 transition hover:opacity-90";
 
@@ -125,11 +137,22 @@ export default async function Home() {
 
   return (
     <div className="space-y-16 py-10 md:py-14">
-      <section className="grid gap-8 rounded-2xl bg-gray-50 px-6 py-10 md:grid-cols-2 md:px-10">
-        <div className="space-y-5">
-          <p className="text-sm font-semibold uppercase tracking-wide text-gray-600">
+      <section
+        className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 px-6 py-10 shadow-sm md:grid md:grid-cols-2 md:gap-8 md:px-10"
+        style={heroBackground}
+      >
+        <div className="pointer-events-none absolute inset-0">
+          <div className="floating-glow absolute left-10 top-6 h-32 w-32 rounded-full blur-3xl opacity-50" style={{ background: accent.primary }} />
+          <div className="floating-glow delay-100 absolute bottom-0 right-6 h-40 w-40 rounded-full blur-3xl opacity-40" style={{ background: accent.secondary }} />
+        </div>
+        <div className="relative space-y-5">
+          <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-gray-200 bg-white/70 backdrop-blur">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ background: accent.primary }}
+            />
             Based in Glasgow, serving the Central Belt
-          </p>
+          </span>
           <h1 className="text-3xl font-bold leading-tight md:text-4xl">
             Straight-talking IT, Wi-Fi and audio for Glasgow small businesses and homes
           </h1>
@@ -156,7 +179,8 @@ export default async function Home() {
             You’ll speak directly with a real engineer, not a call centre.
           </p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="relative rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+          <div className="absolute -top-6 right-6 h-12 w-12 rounded-full opacity-20 blur-xl" style={accentGradient} />
           <h2 className="text-lg font-semibold text-gray-900">Why people choose us</h2>
           <ul className="mt-4 space-y-3 text-gray-700">
             {benefitPoints.map((point) => (
@@ -169,24 +193,32 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="space-y-6">
+      <section className="space-y-6" style={dottedGrid}>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-bold">What we do</h2>
-            <p className="text-gray-700">
-              Practical IT support, Wi-Fi, audio and automation for small teams and homes.
-            </p>
+            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-gray-200">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ background: `${accent.primary}20` }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: accent.primary }} />
+              </span>
+              Services & outcomes
+            </div>
+            <h2 className="mt-2 text-2xl font-bold">What we do</h2>
+            <p className="text-gray-700">Practical IT support, Wi-Fi, audio and automation for small teams and homes.</p>
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {services.map((service) => (
             <div
               key={service.title}
-              className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+              className="card-corner flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg"
+              style={{ borderColor: `${accent.primary}1f` }}
             >
               <div className="flex items-center gap-3">
                 {service.icon ? (
-                  <div className="h-10 w-10 rounded-lg bg-gray-100 p-2.5">
+                  <div
+                    className="h-10 w-10 rounded-lg p-2.5"
+                    style={{ background: `${accent.primary}12` }}
+                  >
                     <Image
                       src={service.icon}
                       alt={`${service.title} icon`}
@@ -210,17 +242,30 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="space-y-6">
+      <section className="space-y-6" style={dottedGrid}>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
+            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-gray-200">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ background: `${accent.secondary}20` }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: accent.secondary }} />
+              </span>
+              Who we help
+            </div>
             <h2 className="text-2xl font-bold">Who we help</h2>
             <p className="text-gray-700">If this sounds like you, let’s talk.</p>
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {audiences.map((audience) => (
-            <div key={audience.title} className="rounded-lg border border-gray-200 p-4 flex gap-3">
-              <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gray-100 p-2.5 flex items-center justify-center">
+            <div
+              key={audience.title}
+              className="card-corner flex gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+              style={{ borderColor: `${accent.primary}1f` }}
+            >
+              <div
+                className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg p-2.5"
+                style={{ background: `${accent.primary}14` }}
+              >
                 {audience.icon ? (
                   <Image
                     src={audience.icon}
@@ -241,16 +286,26 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="space-y-6 rounded-2xl border border-gray-200 bg-white px-6 py-8 shadow-sm">
+      <section className="space-y-6 rounded-2xl border border-gray-200 bg-white px-6 py-8 shadow-sm" style={dottedGrid}>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
+            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-gray-200">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ background: `${accent.primary}20` }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: accent.primary }} />
+              </span>
+              Results
+            </div>
             <h2 className="text-2xl font-bold text-gray-900">Results & client voices</h2>
             <p className="text-gray-700">Real scenarios and feedback from Glasgow clients.</p>
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {stories.map((story) => (
-            <div key={story.quote} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <div
+              key={story.quote}
+              className="card-corner rounded-lg border border-gray-200 bg-white p-4 shadow-md"
+              style={{ borderColor: `${accent.primary}1f` }}
+            >
               <p className="text-xs font-semibold uppercase text-gray-600">Case study</p>
               <p className="mt-1 text-gray-900 font-semibold">{story.title}</p>
               <p className="mt-1 text-gray-700 text-sm">{story.summary}</p>
@@ -263,18 +318,32 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white border border-gray-200 px-6 py-8 shadow-sm md:px-10">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
+      <section
+        className="relative overflow-hidden rounded-2xl border bg-white px-6 py-8 shadow-sm md:px-10"
+        style={{ borderColor: `${accent.primary}1f`, ...dottedGrid }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-15"
+          style={{ background: `linear-gradient(135deg, ${accent.primary}, ${accent.secondary})` }}
+        />
+        <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-white/60 backdrop-blur">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ background: `${accent.primary}20` }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: accent.primary }} />
+              </span>
+              Show home
+            </div>
             <h2 className="text-2xl font-bold text-gray-900">Book a show home visit</h2>
             <p className="text-gray-700">
               See whole home Wi-Fi and audio in action. Appointments available on request.
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/contact#show-home"
-              className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-2.5 text-white text-sm font-semibold shadow-md hover:opacity-90"
+              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-gray-900 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+              style={{ background: `linear-gradient(135deg, ${accent.primary}, ${accent.secondary})` }}
             >
               Book a visit
             </Link>
@@ -283,9 +352,18 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="space-y-4 rounded-2xl border border-gray-200 bg-white px-6 py-8 shadow-sm">
+      <section
+        className="space-y-4 rounded-2xl border border-gray-200 bg-white px-6 py-8 shadow-sm"
+        style={{ borderColor: `${accent.primary}1f`, ...dottedGrid }}
+      >
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
+            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-gray-200">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full" style={{ background: `${accent.secondary}20` }}>
+                <span className="h-2 w-2 rounded-full" style={{ background: accent.secondary }} />
+              </span>
+              FAQs
+            </div>
             <h2 className="text-2xl font-bold text-gray-900">FAQs</h2>
             <p className="text-gray-700">Quick answers for small businesses and homeowners.</p>
           </div>
@@ -307,20 +385,43 @@ export default async function Home() {
       </section>
       <FaqSchema items={faqItems} />
 
-      <section className="rounded-2xl bg-gray-900 px-6 py-10 text-white md:px-10">
+      <section
+        className="relative overflow-hidden rounded-2xl bg-gray-900 px-6 py-10 text-white md:px-10"
+        style={{ background: `radial-gradient(circle at 15% 20%, ${accent.primary}33, #111827 45%), radial-gradient(circle at 90% 10%, ${accent.secondary}33, #0f172a 40%), #0f172a` }}
+      >
+        <div className="pointer-events-none absolute inset-0 opacity-20">
+          <div className="absolute left-10 top-6 h-32 w-32 rounded-full bg-white blur-3xl" />
+          <div className="absolute right-6 bottom-0 h-40 w-40 rounded-full bg-white blur-3xl" />
+        </div>
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
-          <div className="space-y-3">
+          <div className="relative space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white ring-1 ring-white/20 backdrop-blur">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+                <span className="h-2 w-2 rounded-full" style={{ background: accent.primary }} />
+              </span>
+              How we work
+            </div>
             <h2 className="text-2xl font-bold">How we work</h2>
             <p className="text-gray-200">
               Simple, transparent steps so you always know what’s happening.
             </p>
             <ol className="space-y-3 text-gray-100">
-              <li><strong>1) Listen.</strong> We ask what’s not working and what you need.</li>
-              <li><strong>2) Make a clear plan.</strong> Options, pros/cons, and what it will deliver.</li>
-              <li><strong>3) Set up, support, improve.</strong> We implement, support and refine.</li>
+              <li className="flex items-start gap-3">
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-semibold text-gray-900" style={{ background: accent.secondary }}>1</span>
+                <span><strong>Listen.</strong> We ask what’s not working and what you need.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-semibold text-gray-900" style={{ background: accent.primary }}>2</span>
+                <span><strong>Make a clear plan.</strong> Options, pros/cons, and what it will deliver.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full font-semibold text-gray-900" style={{ background: "#ffffff" }}>3</span>
+                <span><strong>Set up, support, improve.</strong> We implement, support and refine.</span>
+              </li>
             </ol>
           </div>
-          <div className="rounded-xl bg-white/5 p-6 shadow-lg">
+          <div className="card-corner relative rounded-xl bg-white/5 p-6 shadow-lg ring-1 ring-white/10">
+            <div className="pointer-events-none absolute -right-4 -top-4 h-16 w-16 rounded-full bg-white/20 blur-2xl" />
             <h3 className="text-lg font-semibold">Ready to start?</h3>
             <p className="mt-2 text-gray-200">
               Call now for IT support, Wi-Fi planning or audio design tailored to your space.
