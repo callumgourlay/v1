@@ -20,11 +20,10 @@ const routes = [
   "/cookies",
 ];
 
-export default function sitemap() {
-  const headersList = headers();
-  const host = headersList.get("host") || "scotsmart.co.uk";
-  const cleaned = host.replace(/^www\./, "");
-  const config = getDomainConfig(cleaned);
+export default async function sitemap() {
+  const headersList = await headers();
+  const host = (headersList.get("host") || "scotsmart.co.uk").replace(/^www\./, "");
+  const config = getDomainConfig(host);
   const lastModified = new Date().toISOString();
 
   return routes.map((route) => ({
