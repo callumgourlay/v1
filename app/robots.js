@@ -1,5 +1,12 @@
+import { headers } from "next/headers";
+import { getDomainConfig } from "@/lib/domainConfig";
+
 export default function robots() {
-  const primary = process.env.NEXT_PUBLIC_PRIMARY_DOMAIN || "scotsmart.co.uk";
+  const headersList = headers();
+  const host = headersList.get("host") || "scotsmart.co.uk";
+  const cleaned = host.replace(/^www\./, "");
+  const config = getDomainConfig(cleaned);
+
   return {
     rules: [
       {
@@ -7,6 +14,6 @@ export default function robots() {
         allow: "/",
       },
     ],
-    sitemap: `https://${primary}/sitemap.xml`,
+    sitemap: `https://${config.primaryDomain}/sitemap.xml`,
   };
 }

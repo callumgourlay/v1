@@ -1,4 +1,5 @@
-import { domainList } from "@/lib/domainConfig";
+import { headers } from "next/headers";
+import { getDomainConfig } from "@/lib/domainConfig";
 
 const routes = [
   "/",
@@ -20,11 +21,14 @@ const routes = [
 ];
 
 export default function sitemap() {
+  const headersList = headers();
+  const host = headersList.get("host") || "scotsmart.co.uk";
+  const cleaned = host.replace(/^www\./, "");
+  const config = getDomainConfig(cleaned);
   const lastModified = new Date().toISOString();
-  return domainList.flatMap((domain) =>
-    routes.map((route) => ({
-      url: `https://${domain}${route}`,
-      lastModified,
-    }))
-  );
+
+  return routes.map((route) => ({
+    url: `https://${config.primaryDomain}${route}`,
+    lastModified,
+  }));
 }
