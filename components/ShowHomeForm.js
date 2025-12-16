@@ -27,9 +27,15 @@ export default function ShowHomeForm({ accent, phone }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        mode: "cors",
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error("Failed");
+      const success = res.ok && data && data.ok === true;
+      if (!success) {
+        // eslint-disable-next-line no-console
+        console.error("Show home form error", res.status, data);
+        throw new Error("Failed");
+      }
       setStatus({ state: "success", message: "Thanks - we’ve received your booking request." });
       event.currentTarget.reset();
     } catch (err) {
