@@ -33,7 +33,7 @@ export default function ShowHomeForm({ accent, phone }) {
         mode: "cors",
       });
       const data = await res.json().catch(() => ({}));
-      const success = res.ok && data && data.ok === true;
+      const success = res.ok && (typeof data.ok === "undefined" || data.ok === true);
       if (!success) {
         // eslint-disable-next-line no-console
         console.error("Show home form error", res.status, data);
