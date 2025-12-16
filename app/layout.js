@@ -8,6 +8,9 @@ import Analytics from "@/components/Analytics";
 import StructuredData from "@/components/StructuredData";
 import CookieBanner from "@/components/CookieBanner";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

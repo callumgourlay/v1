@@ -121,8 +121,5 @@ export async function generateMetadata() {
           images: [ogImage],
         }
       : undefined,
-    icons: {
-      icon: config.logo ? `https://${config.primaryDomain}${config.logo}` : undefined,
-    },
   };
 }

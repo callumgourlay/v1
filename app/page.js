@@ -6,7 +6,7 @@ import { getDomainConfig } from "@/lib/domainConfig";
 import FaqSchema from "@/components/FaqSchema";
 
 const benefitPoints = [
-  "Local, director-led support across Glasgow and the Central Belt.",
+  "Local, director-led support for Glasgow micro and small businesses (1-15) and homes.",
   "No jargon - clear options and honest advice.",
   "Reliable Wi-Fi and networks that just work.",
   "Audio planned for the rooms you actually use.",
@@ -131,10 +131,10 @@ export default async function Home() {
             Based in Glasgow, serving the Central Belt
           </p>
           <h1 className="text-3xl font-bold leading-tight md:text-4xl">
-            Straight-talking IT, Wi-Fi and audio for Glasgow’s small businesses and homes
+            Straight-talking IT, Wi-Fi and audio for Glasgow small businesses and homes
           </h1>
           <p className="text-lg text-gray-700">
-            Friendly engineers who sort problems quickly and set you up properly. No jargon, no hard
+            Friendly, director-led support for micro and small teams (1-15) and homeowners. No jargon, no hard
             sell - just clear options that suit how you work and live.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -348,7 +348,7 @@ export default async function Home() {
   );
 }
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const headersList = await headers();
@@ -373,9 +373,6 @@ export async function generateMetadata() {
       title: config.seo.title,
       description: config.seo.description,
       images: ogImage ? [ogImage] : undefined,
-    },
-    icons: {
-      icon: config.logo ? `https://${config.primaryDomain}${config.logo}` : undefined,
     },
   };
 }
