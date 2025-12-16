@@ -33,13 +33,16 @@ export default function ContactForm({ accent, phone }) {
         body: JSON.stringify(payload),
         mode: "cors",
       });
-      const data = await res.json().catch(() => ({}));
-      const success = res.ok && (typeof data.ok === "undefined" || data.ok === true);
-      if (!success) {
-        // eslint-disable-next-line no-console
-        console.error("Contact form error", res.status, data);
-        throw new Error("Failed");
+      const text = await res.text();
+      let okFlag = false;
+      try {
+        const json = JSON.parse(text);
+        okFlag = json?.ok === true;
+      } catch {
+        okFlag = /"ok"\s*:\s*true/.test(text);
       }
+      const success = res.ok && (text.trim() === "" || okFlag);
+      if (!success) throw new Error(`HTTP ${res.status} ${text}`);
       setStatus({ state: "success", message: "Thanks – we’ve received your enquiry." });
       event.currentTarget.reset();
     } catch (err) {
