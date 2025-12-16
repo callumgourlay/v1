@@ -17,11 +17,14 @@ export default function ShowHomeForm({ accent, phone }) {
       name: formData.get("name"),
       email: formData.get("email"),
       phone: formData.get("phone"),
-      preferred_time: formData.get("preferred_time"),
-      message: formData.get("message"),
+      preferred_time: formData.get("preferred_time") || "",
+      message: formData.get("message") || "",
       consent: formData.get("consent") === "on",
-      show_home_extra: formData.get("show_home_extra"),
+      show_home_extra: formData.get("show_home_extra") ?? "",
     };
+    if (!payload.preferred_time) delete payload.preferred_time;
+    if (!payload.message) delete payload.message;
+    if (!payload.show_home_extra) payload.show_home_extra = "";
     try {
       const res = await fetch(WORKER_URL, {
         method: "POST",

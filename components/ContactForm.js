@@ -17,11 +17,14 @@ export default function ContactForm({ accent, phone }) {
       name: formData.get("name"),
       business: formData.get("business") || "business",
       email: formData.get("email"),
-      phone: formData.get("phone"),
+      phone: formData.get("phone") || "",
       message: formData.get("message"),
       consent: formData.get("consent") === "on",
-      extra_field: formData.get("extra_field"),
+      extra_field: formData.get("extra_field") ?? "",
     };
+    if (!payload.phone) delete payload.phone;
+    if (!payload.business) delete payload.business;
+    if (!payload.extra_field) payload.extra_field = "";
 
     try {
       const res = await fetch(WORKER_URL, {
