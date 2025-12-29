@@ -13,3 +13,118 @@ body {
 a {
   text-decoration: none;
 }
+
+.animated-dots {
+  background-position: 0 0;
+  animation: dotShift 18s ease-in-out infinite alternate;
+}
+
+@keyframes dotShift {
+  to {
+    background-position: 12px 12px;
+  }
+}
+
+.floating-glow {
+  animation: floatGlow 18s ease-in-out infinite alternate;
+}
+
+.floating-glow.delay-100 {
+  animation-delay: 2s;
+}
+
+@keyframes floatGlow {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-6px) scale(1.02);
+  }
+}
+
+.accent-stripe {
+  height: 8px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  opacity: 0.15;
+}
+
+.nav-link {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  opacity: 0.9;
+}
+
+.nav-link:focus-visible::after,
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.cta-halo {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-halo::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at 50% 50%, var(--accent-primary, #307fb9) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: scale(0.9);
+}
+
+.cta-halo:hover::before,
+.cta-halo:focus-visible::before {
+  opacity: 0.35;
+  transform: scale(1);
+}
+
+.card-corner {
+  position: relative;
+}
+
+.card-corner::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  opacity: 0.35;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent-primary, #307fb9) 80%, #ffffff 20%);
+  color: #0f172a;
+}
+
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--accent-bg, #f6f8fb);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--accent-primary, #307fb9);
+  border: 3px solid var(--accent-bg, #f6f8fb);
+  border-radius: 9999px;
+}

@@ -60,26 +60,41 @@ export default async function ServicesPage() {
   const host = headersList.get("host") || "scotsmart.co.uk";
   const config = getDomainConfig(host);
   const accent = config.accent || { primary: "#307fb9", secondary: "#3eaedf" };
+  const accentGradient = { background: `linear-gradient(135deg, ${accent.primary}, ${accent.secondary})` };
 
   return (
     <div className="space-y-10 py-10 md:py-14">
-      <div className="space-y-4">
-        <p className="text-sm font-semibold uppercase tracking-wide text-gray-600">Services</p>
-        <h1 className="text-3xl font-bold leading-tight md:text-4xl">
-          Practical IT, Wi-Fi and audio services for Glasgow and the Central Belt
-        </h1>
-        <p className="text-lg text-gray-700">
-          Every service is designed for small businesses and homeowners who want reliable tech without jargon. If you need a quick steer, call us now.
-        </p>
-        <CallButton phone={config.phone} accent={accent} label="Call 0141 478 0794" />
+      <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white/70 p-6 shadow-sm md:p-8">
+        <div className="pointer-events-none absolute inset-0 opacity-30" style={accentGradient} />
+        <div className="relative space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-800 ring-1 ring-white/60 backdrop-blur">
+            <span className="h-2 w-2 rounded-full" style={{ background: accent.primary }} />
+            Services
+          </div>
+          <h1 className="text-3xl font-bold leading-tight md:text-4xl">
+            Practical IT, Wi-Fi and audio services for Glasgow and the Central Belt
+          </h1>
+          <p className="text-lg text-gray-700">
+            Every service is designed for small businesses and homeowners who want reliable tech without jargon. If you need a quick steer, call us now.
+          </p>
+          <CallButton phone={config.phone} accent={accent} label="Call 0141 478 0794" />
+        </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {services.map((service) => (
           <div
             key={service.title}
-            className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+            className="card-corner flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg"
+            style={{ borderColor: `${accent.primary}1f` }}
           >
-            <h2 className="text-xl font-semibold text-gray-900">{service.title}</h2>
+            <div className="flex items-start justify-between gap-2">
+              <h2 className="text-xl font-semibold text-gray-900">{service.title}</h2>
+              <span
+                className="h-2 w-10 rounded-full"
+                style={accentGradient}
+                aria-hidden
+              />
+            </div>
             <p className="mt-2 text-gray-700">{service.summary}</p>
             <a
               href={service.link}
